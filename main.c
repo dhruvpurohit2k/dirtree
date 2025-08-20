@@ -10,7 +10,13 @@
 
 int check_if_ingnored_file(struct dirent *, char **, int);
 
-enum ARG_VALUE { ARG_PATH, ARG_IGNORE_FILES, ARG_DEPTH, ARG_PARSE_FINISHED };
+enum ARG_VALUE {
+  ARG_PATH,
+  ARG_IGNORE_FILES,
+  ARG_DEPTH,
+  ARG_PARSE_FINISHED,
+  ARG_HELP
+};
 
 struct Tree *make_DirTree(struct string *path, struct Tree *parent,
                           char **ignore_files, int ignore_files_count,
@@ -95,6 +101,21 @@ int main(int argc, char *argv[]) {
             break;
           case 'd':
             current_arg = ARG_DEPTH;
+            break;
+          case 'h':
+            printf("Usage : dirtree PATH [OPTIONS] VALUE...\n");
+            printf("\n\n");
+            printf("An application to visualize the contents of a dirctory in "
+                   "a tree like structure.\n\n");
+            printf("Options : \n");
+            printf("-d, Used to specify the depth to the tree, i.e how deep it "
+                   "will search and show the file structre. Default value is "
+                   "1. Accepts values from 0 to 9\n");
+            printf("-i, Used to specify the files the application has to "
+                   "ignore. Takes in multiple arguments\n");
+            printf("-p, Used to specify the path when the first argument been "
+                   "set to something else using the options.\n");
+            return 0;
             break;
           default:
             printf("INVALID OPTION -%c\n", option);
