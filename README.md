@@ -1,6 +1,6 @@
 ## Dirtree
 
-I simple cli tool to visualize the files in a directory.
+I simple cli tool to visualize the files in a directory. It was primarily built for linux but i have added preprocessor macros for portability to windows. If you find any bugs feel free to raise an issue.
 
 
 ## How to use
