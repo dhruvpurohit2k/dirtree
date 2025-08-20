@@ -126,7 +126,12 @@ int main(int argc, char *argv[]) {
       case ARG_PATH:
         remove_string(root_name, 0, root_name->size);
         remove_string(path, 0, path->size);
-        add_all_character(root_name, realpath(argv[i], NULL));
+        char *absolutepath = realpath(argv[i], NULL);
+        if (absolutepath == NULL) {
+          printf("ERROR IN GETTING THE PATH\n");
+          return -2;
+        }
+        add_all_character(root_name, absolutepath);
         add_all_character(path, root_name->c);
         past_arg = current_arg;
         current_arg = ARG_PARSE_FINISHED;
