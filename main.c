@@ -4,9 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
-#define PATH_SEPERATOR "/"
+#ifdef _WIN32
+#define PATH_SEPERATOR '\\'
+#define getcwd _getcwd
+#else
+#define PATH_SEPERATOR '/'
+#include <unistd.h>
+#endif
 
 int check_if_ingnored_file(struct dirent *, char **, int);
 
@@ -30,13 +35,13 @@ struct Tree *make_DirTree(struct string *path, struct Tree *parent,
     if (en->d_type == DT_DIR) {
       struct string *child_name = create_string();
       add_all_character(child_name, en->d_name);
-      add_all_character(child_name, PATH_SEPERATOR);
+      append_string(child_name, PATH_SEPERATOR);
       struct Tree *child = create_Tree(child_name);
       if (!check_if_ingnored_file(en, ignore_files, ignore_files_count) &&
           current_depth < MAX_DEPTH) {
         struct string *recurse_path = create_string();
         add_all_character(recurse_path, path->c);
-        add_all_character(recurse_path, PATH_SEPERATOR);
+        append_string(recurse_path, PATH_SEPERATOR);
         add_all_character(recurse_path, en->d_name);
 
         child = make_DirTree(recurse_path, child, ignore_files,
@@ -147,12 +152,17 @@ int main(int argc, char *argv[]) {
       case ARG_PATH:
         remove_string(root_name, 0, root_name->size);
         remove_string(path, 0, path->size);
-        char *absolutepath = realpath(argv[i], NULL);
-        if (absolutepath == NULL) {
+        char *absolute_path[256];
+#ifdef _WIN32
+        _fullpath(absolutepath, argv[i], 256);
+#else
+        *absolute_path = realpath(argv[i], NULL);
+#endif
+        if (*absolute_path == NULL) {
           printf("ERROR IN GETTING THE PATH\n");
           return -2;
         }
-        add_all_character(root_name, absolutepath);
+        add_all_character(root_name, *absolute_path);
         add_all_character(path, root_name->c);
         past_arg = current_arg;
         current_arg = ARG_PARSE_FINISHED;
@@ -165,12 +175,12 @@ int main(int argc, char *argv[]) {
 
   size_t i = root_name->size - 2;
   // Getting the name of the top level directory
-  while (i > 0 && root_name->c[i] != '/')
+  while (i > 0 && root_name->c[i] != PATH_SEPERATOR)
     i--;
   remove_string(root_name, 0, i + 1);
 
   // Creating the directory tree
-  append_string(root_name, '/');
+  append_string(root_name, PATH_SEPERATOR);
   struct Tree *root = create_Tree(root_name);
   root =
       make_DirTree(path, root, ignore_files, size_ignore_files, 0, depth_level);
