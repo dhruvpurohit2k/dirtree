@@ -35,7 +35,15 @@ void add_child_Tree(struct Tree *parent, struct Tree *child) {
 }
 
 int print_tree(struct Tree *tree, int indent_level) {
-  print_string(tree->name);
+
+  if (tree->name->c[tree->name->size - 1] == '/') {
+    printf("\x1b[32m%s\n", tree->name->c);
+    printf("\x1b[0m");
+  } else {
+    printf("\x1b[34m%s\n", tree->name->c);
+    printf("\x1b[0m");
+  }
+  /*print_string(tree->name);*/
   indent_level += tree->name->size / 2;
   for (int i = 0; i < tree->childern_number; i++) {
     indent(indent_level);

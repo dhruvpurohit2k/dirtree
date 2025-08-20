@@ -149,13 +149,15 @@ int main(int argc, char *argv[]) {
   remove_string(root_name, 0, i + 1);
 
   // Creating the directory tree
+  append_string(root_name, '/');
   struct Tree *root = create_Tree(root_name);
   root =
       make_DirTree(path, root, ignore_files, size_ignore_files, 0, depth_level);
 
   // printing the tree
+  printf("\n");
   print_tree(root, 0);
-
+  printf("\n");
   // freeing the tree
   free_tree(root);
   free(ignore_files);
