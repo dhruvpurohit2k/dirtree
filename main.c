@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
       case ARG_PATH:
         remove_string(root_name, 0, root_name->size);
         remove_string(path, 0, path->size);
-        add_all_character(root_name, argv[i]);
+        add_all_character(root_name, realpath(argv[i], NULL));
         add_all_character(path, root_name->c);
         past_arg = current_arg;
         current_arg = ARG_PARSE_FINISHED;
